@@ -11,6 +11,8 @@
     <Description>A library of miscellaneous .NET managed code utility classes written in C#.</Description>
     <PackageProjectUrl>https://github.com/IDeliverable/Utils</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageIconUrl>http://storage.ideliverable.com/media/Default/Logo/Logo-Icon-Color-Loud-512.png</PackageIconUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
