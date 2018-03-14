@@ -4,11 +4,11 @@ namespace IDeliverable.Utils.Core
 {
     public class FileSizeFormatProvider : IFormatProvider, ICustomFormatter
     {
-        private const decimal OneKiloByte = 1024m;
-        private const decimal OneMegaByte = 1024m * OneKiloByte;
-        private const decimal OneGigaByte = 1024m * OneMegaByte;
-        private const decimal OneTeraByte = 1024m * OneGigaByte;
-        private const string FormatString = "fs";
+        private const decimal mOneKiloByte = 1024m;
+        private const decimal mOneMegaByte = 1024m * mOneKiloByte;
+        private const decimal mOneGigaByte = 1024m * mOneMegaByte;
+        private const decimal mOneTeraByte = 1024m * mOneGigaByte;
+        private const string mFormatString = "fs";
 
         object IFormatProvider.GetFormat(Type formatType)
         {
@@ -17,7 +17,7 @@ namespace IDeliverable.Utils.Core
 
         string ICustomFormatter.Format(string aFormat, object arg, IFormatProvider formatProvider)
         {
-            if (aFormat == null || !aFormat.StartsWith(FormatString) || arg is string)
+            if (aFormat == null || !aFormat.StartsWith(mFormatString) || arg is string)
             {
                 return FallbackFormat(aFormat, arg, formatProvider);
             }
@@ -35,24 +35,24 @@ namespace IDeliverable.Utils.Core
 
             decimal size;
             string suffix;
-            if (value >= OneTeraByte)
+            if (value >= mOneTeraByte)
             {
-                size = value / OneTeraByte;
+                size = value / mOneTeraByte;
                 suffix = "TB";
             }
-            else if (value >= OneGigaByte)
+            else if (value >= mOneGigaByte)
             {
-                size = value / OneGigaByte;
+                size = value / mOneGigaByte;
                 suffix = "GB";
             }
-            else if (value >= OneMegaByte)
+            else if (value >= mOneMegaByte)
             {
-                size = value / OneMegaByte;
+                size = value / mOneMegaByte;
                 suffix = "MB";
             }
-            else if (value >= OneKiloByte)
+            else if (value >= mOneKiloByte)
             {
-                size = value / OneKiloByte;
+                size = value / mOneKiloByte;
                 suffix = "KB";
             }
             else
@@ -67,8 +67,7 @@ namespace IDeliverable.Utils.Core
 
         private string FallbackFormat(string format, object arg, IFormatProvider formatProvider)
         {
-            var formattable = arg as IFormattable;
-            return formattable != null ? formattable.ToString(format, formatProvider) : arg.ToString();
+            return arg is IFormattable formattable ? formattable.ToString(format, formatProvider) : arg.ToString();
         }
     }
 }

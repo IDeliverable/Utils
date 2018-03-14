@@ -42,7 +42,7 @@ namespace IDeliverable.Utils.Core.Collections.BubbleChange
 
         public bool Equals(BubbleChangeOperation other)
         {
-            if (ReferenceEquals(null, other))
+            if (other is null)
                 return false;
             if (ReferenceEquals(this, other))
                 return true;

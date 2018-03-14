@@ -13,7 +13,7 @@
 
         public bool Equals(BubbleChangeProperty other)
         {
-            if (ReferenceEquals(null, other))
+            if (other is null)
                 return false;
             if (ReferenceEquals(this, other))
                 return true;

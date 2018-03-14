@@ -171,7 +171,7 @@ namespace IDeliverable.Utils.Core.EventExtensions
 
                     try
                     {
-                        SendOrPostCallback invokeFunc = state => tempHandler.DynamicInvoke(args);
+                        void invokeFunc(object state) => tempHandler.DynamicInvoke(args);
 
                         // Invoke the handler asynchronously in the target synchronization
                         // context if one is specified, otherwise call the handler directly.
