@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -92,21 +92,21 @@ namespace IDeliverable.Utils.Core.Collections.BubbleChange
         {
             base.OnCollectionChanged(e);
 
-            BubbleChangeType changeType = default(BubbleChangeType);
+            var changeType = default(BubbleChangeType);
             IEnumerable<object> items = null;
 
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
                     changeType = BubbleChangeType.ItemAdded;
-                    object[] newItems = (object[])Array.CreateInstance(typeof(object), e.NewItems.Count);
+                    var newItems = (object[])Array.CreateInstance(typeof(object), e.NewItems.Count);
                     e.NewItems.CopyTo(newItems, 0);
                     items = newItems;
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
                     changeType = BubbleChangeType.ItemRemoved;
-                    object[] oldItems = (object[])Array.CreateInstance(typeof(object), e.OldItems.Count);
+                    var oldItems = (object[])Array.CreateInstance(typeof(object), e.OldItems.Count);
                     e.OldItems.CopyTo(oldItems, 0);
                     items = oldItems;
                     break;
