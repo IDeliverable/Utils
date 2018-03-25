@@ -343,24 +343,33 @@ namespace IDeliverable.Utils.Core.Tests
         }
 
         [TestMethod]
-        [Description("Adding a new item with a new group value does not raise the appropriate events when BeginUpdate is called. Only when EndUpdate is called.")]
-        public void BatchChangeTest01()
+        [Description("Adding a new item with a new group value does not raise any events within a BeginUpdate/EndUpdate block, but raises a collection reset event on EndUpdate.")]
+        public void ChangeTest12()
         {
+            var groupCollectionAnyEventRaised = false;
             var groupCollectionAddEventRaised = false;
+            var groupCollectionResetEventRaised = false;
             var newTime = new DateTime(2017, 01, 03, 12, 00, 00);
             var newName = "HappeningDay3@12";
 
             mTarget.CollectionChanged += (sender, e) =>
             {
-                groupCollectionAddEventRaised = true;
+                groupCollectionAnyEventRaised = true;
+                groupCollectionAddEventRaised = e.Action == NotifyCollectionChangedAction.Add;
+                groupCollectionResetEventRaised = e.Action == NotifyCollectionChangedAction.Reset;
             };
 
             mTarget.BeginUpdate();
+
             mSourceCollection.Add(new Happening(newTime, newName));
 
-            Assert.IsFalse(groupCollectionAddEventRaised);
+            Assert.IsFalse(groupCollectionAnyEventRaised);
+
             mTarget.EndUpdate();
-            Assert.IsTrue(groupCollectionAddEventRaised);
+
+            Assert.IsTrue(groupCollectionAnyEventRaised);
+            Assert.IsFalse(groupCollectionAddEventRaised);
+            Assert.IsTrue(groupCollectionResetEventRaised);
         }
 
         private class Happening : INotifyPropertyChanged

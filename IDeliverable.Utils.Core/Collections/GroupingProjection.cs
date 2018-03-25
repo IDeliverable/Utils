@@ -157,7 +157,7 @@ namespace IDeliverable.Utils.Core.Collections
                     AddEventHandlersToGroups(newGroups);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    RemoveEventHandlersFromGroups(oldGroups); // TODO: Is this really correct?
+                    RemoveEventHandlersFromGroups(oldGroups);
                     AddEventHandlersToGroups(newGroups);
                     break;
             }
@@ -223,12 +223,18 @@ namespace IDeliverable.Utils.Core.Collections
 
         private void AddEventHandlersToGroups(IEnumerable<Group> groups)
         {
+            if (groups == null)
+                return;
+
             foreach (var g in groups)
                 ((INotifyCollectionChanged)g.Items).CollectionChanged += GroupItems_CollectionChanged;
         }
 
         private void RemoveEventHandlersFromGroups(IEnumerable<Group> groups)
         {
+            if (groups == null)
+                return;
+            
             foreach (var g in groups)
                 ((INotifyCollectionChanged)g.Items).CollectionChanged -= GroupItems_CollectionChanged;
         }
