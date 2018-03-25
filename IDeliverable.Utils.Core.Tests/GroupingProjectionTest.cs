@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -340,6 +340,27 @@ namespace IDeliverable.Utils.Core.Tests
 
             Assert.IsFalse(mTarget[0].Items.Contains(happeningToChange));
             Assert.IsTrue(collectionRemoveEventRaised);
+        }
+
+        [TestMethod]
+        [Description("Adding a new item with a new group value does not raise the appropriate events when BeginUpdate is called. Only when EndUpdate is called.")]
+        public void BatchChangeTest01()
+        {
+            var groupCollectionAddEventRaised = false;
+            var newTime = new DateTime(2017, 01, 03, 12, 00, 00);
+            var newName = "HappeningDay3@12";
+
+            mTarget.CollectionChanged += (sender, e) =>
+            {
+                groupCollectionAddEventRaised = true;
+            };
+
+            mTarget.BeginUpdate();
+            mSourceCollection.Add(new Happening(newTime, newName));
+
+            Assert.IsFalse(groupCollectionAddEventRaised);
+            mTarget.EndUpdate();
+            Assert.IsTrue(groupCollectionAddEventRaised);
         }
 
         private class Happening : INotifyPropertyChanged

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using IDeliverable.Utils.Core.CollectionExtensions;
 
 namespace IDeliverable.Utils.Core.Collections
 {
-    public partial class GroupingProjection<TGroupKey, TOrderKey, TItem> : ObservableCollection<GroupingProjection<TGroupKey, TOrderKey, TItem>.Group>, IDisposable
+    public partial class GroupingProjection<TGroupKey, TOrderKey, TItem> : BatchingCollection<GroupingProjection<TGroupKey, TOrderKey, TItem>.Group>, IDisposable
         where TOrderKey : IComparable<TOrderKey>
     {
         public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector)
