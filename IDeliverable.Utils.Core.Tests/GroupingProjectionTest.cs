@@ -15,7 +15,9 @@ namespace IDeliverable.Utils.Core.Tests
     public class GroupingProjectionTest
     {
         private ObservableCollection<Happening> mSourceCollection;
+        private BatchingCollection<Happening> mBatchingSourceCollection;
         private GroupingProjection<DateTime, DateTime, Happening> mTarget;
+        private GroupingProjection<DateTime, DateTime, Happening> mTarget2;
 
         [TestInitialize]
         public void TestInitialize()
@@ -34,9 +36,31 @@ namespace IDeliverable.Utils.Core.Tests
                 new Happening(new DateTime(2017, 01, 02, 08, 00, 00), "HiddenDay2")
             });
 
+            mBatchingSourceCollection = new BatchingCollection<Happening>(new Happening[]
+            {
+                new Happening(new DateTime(2017, 01, 01, 12, 00, 00), "HappeningDay1@12"),
+                new Happening(new DateTime(2017, 01, 01, 14, 00, 00), "HappeningDay1@14"),
+                new Happening(new DateTime(2017, 01, 01, 16, 00, 00), "HappeningDay1@16"),
+                new Happening(new DateTime(2017, 01, 01, 10, 00, 00), "HappeningDay1@10"),
+                new Happening(new DateTime(2017, 01, 01, 08, 00, 00), "HiddenDay1"),
+                new Happening(new DateTime(2017, 01, 02, 12, 00, 00), "HappeningDay2@12"),
+                new Happening(new DateTime(2017, 01, 02, 14, 00, 00), "HappeningDay2@14"),
+                new Happening(new DateTime(2017, 01, 02, 16, 00, 00), "HappeningDay2@16"),
+                new Happening(new DateTime(2017, 01, 02, 10, 00, 00), "HappeningDay2@10"),
+                new Happening(new DateTime(2017, 01, 02, 08, 00, 00), "HiddenDay2")
+            });
+
             mTarget =
                 new GroupingProjection<DateTime, DateTime, Happening>(
                     mSourceCollection,
+                    item => item.Time.Date,
+                    item => item.Time,
+                    Comparer<DateTime>.Create((x, y) => x.CompareTo(y)),
+                    item => !item.Name.StartsWith("Hidden"));
+
+            mTarget2 =
+                new GroupingProjection<DateTime, DateTime, Happening>(
+                    mBatchingSourceCollection,
                     item => item.Time.Date,
                     item => item.Time,
                     Comparer<DateTime>.Create((x, y) => x.CompareTo(y)),
@@ -343,7 +367,7 @@ namespace IDeliverable.Utils.Core.Tests
         }
 
         [TestMethod]
-        [Description("Adding a new item with a new group value does not raise any events within a BeginUpdate/EndUpdate block, but raises a collection reset event on EndUpdate.")]
+        [Description("Adding a new item with a new group value when the grouping projection is batching does not raise any events within a BeginUpdate/EndUpdate block, but raises a collection reset event on EndUpdate.")]
         public void ChangeTest12()
         {
             var groupCollectionAnyEventRaised = false;
@@ -370,6 +394,30 @@ namespace IDeliverable.Utils.Core.Tests
             Assert.IsTrue(groupCollectionAnyEventRaised);
             Assert.IsFalse(groupCollectionAddEventRaised);
             Assert.IsTrue(groupCollectionResetEventRaised);
+        }
+
+        [TestMethod]
+        [Description("Adding a new item with a new group value when the source collection is batching does not raise any events within a BeginUpdate/EndUpdate block, but raises a collection reset event on EndUpdate.")]
+        public void ChangeTest13()
+        {
+            var groupCollectionAnyEventRaised = false;
+            var newTime = new DateTime(2017, 01, 03, 12, 00, 00);
+            var newName = "HappeningDay3@12";
+
+            mTarget2.CollectionChanged += (sender, e) =>
+            {
+                groupCollectionAnyEventRaised = true;
+            };
+
+            mBatchingSourceCollection.BeginUpdate();
+
+            mBatchingSourceCollection.Add(new Happening(newTime, newName));
+
+            Assert.IsFalse(groupCollectionAnyEventRaised);
+
+            mBatchingSourceCollection.EndUpdate();
+
+            Assert.IsTrue(groupCollectionAnyEventRaised);
         }
 
         private class Happening : INotifyPropertyChanged
