@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using IDeliverable.Utils.Core.CollectionExtensions;
 
 namespace IDeliverable.Utils.Core.Collections
 {
-    public partial class GroupingProjection<TGroupKey, TOrderKey, TItem> : ObservableCollection<GroupingProjection<TGroupKey, TOrderKey, TItem>.Group>, IDisposable
+    public partial class GroupingProjection<TGroupKey, TOrderKey, TItem> : BatchingCollection<GroupingProjection<TGroupKey, TOrderKey, TItem>.Group>, IDisposable
         where TOrderKey : IComparable<TOrderKey>
     {
         public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector)
@@ -157,7 +157,7 @@ namespace IDeliverable.Utils.Core.Collections
                     AddEventHandlersToGroups(newGroups);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    RemoveEventHandlersFromGroups(oldGroups); // TODO: Is this really correct?
+                    RemoveEventHandlersFromGroups(oldGroups);
                     AddEventHandlersToGroups(newGroups);
                     break;
             }
@@ -223,12 +223,18 @@ namespace IDeliverable.Utils.Core.Collections
 
         private void AddEventHandlersToGroups(IEnumerable<Group> groups)
         {
+            if (groups == null)
+                return;
+
             foreach (var g in groups)
                 ((INotifyCollectionChanged)g.Items).CollectionChanged += GroupItems_CollectionChanged;
         }
 
         private void RemoveEventHandlersFromGroups(IEnumerable<Group> groups)
         {
+            if (groups == null)
+                return;
+            
             foreach (var g in groups)
                 ((INotifyCollectionChanged)g.Items).CollectionChanged -= GroupItems_CollectionChanged;
         }
