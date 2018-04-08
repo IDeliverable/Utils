@@ -12,7 +12,8 @@
     <PackageProjectUrl>https://github.com/IDeliverable/Utils</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageIconUrl>http://storage.ideliverable.com/media/Default/Logo/Logo-Icon-Color-Loud-512.png</PackageIconUrl>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
