@@ -28,6 +28,11 @@ namespace IDeliverable.Utils.Core.Collections
         {
         }
 
+        public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, IComparer<TGroupKey> groupKeyComparer, Func<TItem, TOrderKey> orderKeySelector)
+            : this(sourceCollection, groupKeySelector, groupKeyComparer, orderKeySelector, Comparer<TOrderKey>.Default, item => true)
+        {
+        }
+
         public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, IComparer<TGroupKey> groupKeyComparer, Func<TItem, TOrderKey> orderKeySelector, IComparer<TOrderKey> orderKeyComparer)
             : this(sourceCollection, groupKeySelector, groupKeyComparer, orderKeySelector, orderKeyComparer, item => true)
         {
