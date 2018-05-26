@@ -10,7 +10,6 @@ using IDeliverable.Utils.Core.CollectionExtensions;
 namespace IDeliverable.Utils.Core.Collections
 {
     public partial class GroupingProjection<TGroupKey, TOrderKey, TItem> : BatchingCollection<GroupingProjection<TGroupKey, TOrderKey, TItem>.Group>, IDisposable
-        where TGroupKey : IComparable<TGroupKey>
         where TOrderKey : IComparable<TOrderKey>
     {
         public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector)
