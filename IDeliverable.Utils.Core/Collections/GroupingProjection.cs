@@ -10,6 +10,7 @@ using IDeliverable.Utils.Core.CollectionExtensions;
 namespace IDeliverable.Utils.Core.Collections
 {
     public partial class GroupingProjection<TGroupKey, TOrderKey, TItem> : BatchingCollection<GroupingProjection<TGroupKey, TOrderKey, TItem>.Group>, IDisposable
+        where TGroupKey : IComparable<TGroupKey>
         where TOrderKey : IComparable<TOrderKey>
     {
         public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector)
@@ -18,24 +19,35 @@ namespace IDeliverable.Utils.Core.Collections
         }
 
         public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, Func<TItem, TOrderKey> orderKeySelector)
-            : this(sourceCollection, groupKeySelector, orderKeySelector, Comparer<TOrderKey>.Create((x, y) => x.CompareTo(y)))
+            : this(sourceCollection, groupKeySelector, orderKeySelector, Comparer<TOrderKey>.Default)
         {
         }
 
         public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, Func<TItem, TOrderKey> orderKeySelector, IComparer<TOrderKey> orderKeyComparer)
-            : this(sourceCollection, groupKeySelector, orderKeySelector, orderKeyComparer, item => true)
+            : this(sourceCollection, groupKeySelector, Comparer<TGroupKey>.Default, orderKeySelector, orderKeyComparer, item => true)
+        {
+        }
+
+        public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, IComparer<TGroupKey> groupKeyComparer, Func<TItem, TOrderKey> orderKeySelector)
+            : this(sourceCollection, groupKeySelector, groupKeyComparer, orderKeySelector, Comparer<TOrderKey>.Default, item => true)
+        {
+        }
+
+        public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, IComparer<TGroupKey> groupKeyComparer, Func<TItem, TOrderKey> orderKeySelector, IComparer<TOrderKey> orderKeyComparer)
+            : this(sourceCollection, groupKeySelector, groupKeyComparer, orderKeySelector, orderKeyComparer, item => true)
         {
         }
 
         public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, Func<TItem, bool> filterPredicate)
-            : this(sourceCollection, groupKeySelector, item => default(TOrderKey), Comparer<TOrderKey>.Create((x, y) => x.CompareTo(y)), filterPredicate)
+            : this(sourceCollection, groupKeySelector, Comparer<TGroupKey>.Default, item => default(TOrderKey), Comparer<TOrderKey>.Default, filterPredicate)
         {
         }
 
-        public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, Func<TItem, TOrderKey> orderKeySelector, IComparer<TOrderKey> orderKeyComparer, Func<TItem, bool> filterPredicate)
+        public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, IComparer<TGroupKey> groupKeyComparer, Func<TItem, TOrderKey> orderKeySelector, IComparer<TOrderKey> orderKeyComparer, Func<TItem, bool> filterPredicate)
         {
             mSourceCollection = sourceCollection;
             mGroupKeySelector = groupKeySelector;
+            mGroupKeyComparer = groupKeyComparer;
             mOrderKeySelector = orderKeySelector;
             mOrderKeyComparer = orderKeyComparer;
             mFilterPredicate = filterPredicate;
@@ -56,6 +68,7 @@ namespace IDeliverable.Utils.Core.Collections
 
         private readonly IEnumerable<TItem> mSourceCollection;
         private readonly Func<TItem, TGroupKey> mGroupKeySelector;
+        private readonly IComparer<TGroupKey> mGroupKeyComparer;
         private readonly Func<TItem, TOrderKey> mOrderKeySelector;
         private readonly IComparer<TOrderKey> mOrderKeyComparer;
         private readonly Func<TItem, bool> mFilterPredicate;
@@ -122,6 +135,7 @@ namespace IDeliverable.Utils.Core.Collections
                         .OrderBy(mOrderKeySelector, mOrderKeyComparer)
                         .GroupBy(mGroupKeySelector)
                         .Select(group => new Group(group.Key, group))
+                        .OrderBy(x => x.Key, mGroupKeyComparer)
                         .ToArray();
 
                 projection.SynchronizeToView(this, CollectionSynchronizationMode.KeepOrderByMove);
@@ -153,9 +167,6 @@ namespace IDeliverable.Utils.Core.Collections
                     RemoveEventHandlersFromGroups(oldGroups);
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    RemoveEventHandlersFromGroups(oldGroups);
-                    AddEventHandlersToGroups(newGroups);
-                    break;
                 case NotifyCollectionChangedAction.Reset:
                     RemoveEventHandlersFromGroups(oldGroups);
                     AddEventHandlersToGroups(newGroups);
@@ -234,12 +245,12 @@ namespace IDeliverable.Utils.Core.Collections
         {
             if (groups == null)
                 return;
-            
+
             foreach (var g in groups)
                 ((INotifyCollectionChanged)g.Items).CollectionChanged -= GroupItems_CollectionChanged;
         }
 
-        public class Group : IEquatable<Group>, IGrouping<TGroupKey, TItem>
+        public sealed class Group : IEquatable<Group>, IGrouping<TGroupKey, TItem>
         {
             public Group(TGroupKey groupKey) : this(groupKey, Enumerable.Empty<TItem>())
             {
