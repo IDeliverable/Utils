@@ -54,16 +54,18 @@ namespace IDeliverable.Utils.Core.Tests
                 new GroupingProjection<DateTime, DateTime, Happening>(
                     mSourceCollection,
                     item => item.Time.Date,
+                    Comparer<DateTime>.Default,
                     item => item.Time,
-                    Comparer<DateTime>.Create((x, y) => x.CompareTo(y)),
+                    Comparer<DateTime>.Default,
                     item => !item.Name.StartsWith("Hidden"));
 
             mTarget2 =
                 new GroupingProjection<DateTime, DateTime, Happening>(
                     mBatchingSourceCollection,
                     item => item.Time.Date,
+                    Comparer<DateTime>.Default,
                     item => item.Time,
-                    Comparer<DateTime>.Create((x, y) => x.CompareTo(y)),
+                    Comparer<DateTime>.Default,
                     item => !item.Name.StartsWith("Hidden"));
         }
 
@@ -418,6 +420,35 @@ namespace IDeliverable.Utils.Core.Tests
             mBatchingSourceCollection.EndUpdate();
 
             Assert.IsTrue(groupCollectionAnyEventRaised);
+        }
+
+        [TestMethod]
+        [Description("Providing a custom group key comparer allows for custom sorting.")]
+        public void ChangeTest14()
+        {
+            const int specialYear = 2017;
+            var sourceCollection = new ObservableCollection<Happening>(new[]
+            {
+                new Happening(new DateTime(2016, 01, 01, 13, 00, 00), "HappeningDay1@13"),
+                new Happening(new DateTime(specialYear, 01, 01, 14, 00, 00), "Special comes first"),
+                new Happening(new DateTime(2018, 01, 01, 16, 00, 00), "HappeningDay1@16")
+            });
+
+            var target =
+                new GroupingProjection<DateTime, DateTime, Happening>(
+                    sourceCollection,
+                    item => item.Time.Date,
+                    Comparer<DateTime>.Create((x, y) =>
+                    {
+                        if (x.Year == specialYear)
+                            return -1;
+
+                        return x.CompareTo(y);
+                    }),
+                    item => item.Time,
+                    Comparer<DateTime>.Default);
+
+            Assert.AreEqual(specialYear, target.First().Key.Year);
         }
 
         private class Happening : INotifyPropertyChanged
