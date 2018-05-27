@@ -23,7 +23,7 @@ namespace IDeliverable.Utils.Core.Collections
         }
 
         public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, Func<TItem, TOrderKey> orderKeySelector, IComparer<TOrderKey> orderKeyComparer)
-            : this(sourceCollection, groupKeySelector, Comparer<TGroupKey>.Default, orderKeySelector, orderKeyComparer, item => true)
+            : this(sourceCollection, groupKeySelector, null, orderKeySelector, orderKeyComparer, item => true)
         {
         }
 
@@ -38,7 +38,7 @@ namespace IDeliverable.Utils.Core.Collections
         }
 
         public GroupingProjection(IEnumerable<TItem> sourceCollection, Func<TItem, TGroupKey> groupKeySelector, Func<TItem, bool> filterPredicate)
-            : this(sourceCollection, groupKeySelector, Comparer<TGroupKey>.Default, item => default(TOrderKey), Comparer<TOrderKey>.Default, filterPredicate)
+            : this(sourceCollection, groupKeySelector, null, item => default(TOrderKey), Comparer<TOrderKey>.Default, filterPredicate)
         {
         }
 

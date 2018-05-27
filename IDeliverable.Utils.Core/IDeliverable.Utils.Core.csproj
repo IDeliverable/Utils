@@ -12,9 +12,9 @@
     <PackageProjectUrl>https://github.com/IDeliverable/Utils</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageIconUrl>http://storage.ideliverable.com/media/Default/Logo/Logo-Icon-Color-Loud-512.png</PackageIconUrl>
-    <Version>1.0.5.1</Version>
-    <AssemblyVersion>1.0.5.1</AssemblyVersion>
-    <FileVersion>1.0.5.1</FileVersion>
+    <Version>1.0.6.0</Version>
+    <AssemblyVersion>1.0.6.0</AssemblyVersion>
+    <FileVersion>1.0.6.0</FileVersion>
     <PackageReleaseNotes>Removed unnecessary type contraint on GroupingProjection.</PackageReleaseNotes>
   </PropertyGroup>
 

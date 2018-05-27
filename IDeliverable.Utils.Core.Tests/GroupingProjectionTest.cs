@@ -54,7 +54,7 @@ namespace IDeliverable.Utils.Core.Tests
                 new GroupingProjection<DateTime, DateTime, Happening>(
                     mSourceCollection,
                     item => item.Time.Date,
-                    Comparer<DateTime>.Default,
+                    null,
                     item => item.Time,
                     Comparer<DateTime>.Default,
                     item => !item.Name.StartsWith("Hidden"));
@@ -63,7 +63,7 @@ namespace IDeliverable.Utils.Core.Tests
                 new GroupingProjection<DateTime, DateTime, Happening>(
                     mBatchingSourceCollection,
                     item => item.Time.Date,
-                    Comparer<DateTime>.Default,
+                    null,
                     item => item.Time,
                     Comparer<DateTime>.Default,
                     item => !item.Name.StartsWith("Hidden"));
