@@ -1,29 +1,34 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>IDeliverable, Ltd.</Authors>
-    <Company></Company>
-    <Product />
-    <RepositoryUrl>https://github.com/IDeliverable/Utils</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <Description>A library of miscellaneous .NET managed code utility classes written in C#.</Description>
-    <PackageProjectUrl>https://github.com/IDeliverable/Utils</PackageProjectUrl>
-    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
-    <PackageIconUrl>http://storage.ideliverable.com/media/Default/Logo/Logo-Icon-Color-Loud-512.png</PackageIconUrl>
-    <Version>1.0.6.0</Version>
-    <AssemblyVersion>1.0.6.0</AssemblyVersion>
-    <FileVersion>1.0.6.0</FileVersion>
-    <PackageReleaseNotes>Removed unnecessary type contraint on GroupingProjection.</PackageReleaseNotes>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Authors>IDeliverable, Ltd.</Authors>
+        <Company></Company>
+        <Product />
+        <RepositoryUrl>https://github.com/IDeliverable/Utils</RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+        <Description>A library of miscellaneous .NET managed code utility classes written in C#.</Description>
+        <PackageProjectUrl>https://github.com/IDeliverable/Utils</PackageProjectUrl>
+        <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+        <PackageIconUrl>http://storage.ideliverable.com/media/Default/Logo/Logo-Icon-Color-Loud-512.png</PackageIconUrl>
+        <Version>1.0.7.0</Version>
+        <AssemblyVersion>1.0.7.0</AssemblyVersion>
+        <FileVersion>1.0.7.0</FileVersion>
+        <PackageReleaseNotes>Added SourceLink debugging support.</PackageReleaseNotes>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.0" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-62925-02">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="NETStandard.Library" Version="2.0.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Update="NETStandard.Library" Version="2.0.1" />
+    </ItemGroup>
 
 </Project>
