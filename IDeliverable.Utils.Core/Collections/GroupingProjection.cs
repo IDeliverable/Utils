@@ -128,15 +128,17 @@ namespace IDeliverable.Utils.Core.Collections
         {
             lock (mProjectionLock)
             {
-                var projection =
+                var projectionQuery =
                     mSourceCollection.ToArray()
                         .Where(mFilterPredicate)
                         .OrderBy(mOrderKeySelector, mOrderKeyComparer)
                         .GroupBy(mGroupKeySelector)
-                        .Select(group => new Group(group.Key, group))
-                        .OrderBy(x => x.Key, mGroupKeyComparer)
-                        .ToArray();
+                        .Select(group => new Group(group.Key, group));
 
+                if (mGroupKeyComparer != null)
+                    projectionQuery = projectionQuery.OrderBy(x => x.Key, mGroupKeyComparer);
+
+                var projection = projectionQuery.ToArray();
                 projection.SynchronizeToView(this, CollectionSynchronizationMode.KeepOrderByMove);
 
                 foreach (var group in projection)
