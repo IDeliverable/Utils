@@ -12,10 +12,10 @@
         <PackageProjectUrl>https://github.com/IDeliverable/Utils</PackageProjectUrl>
         <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
         <PackageIconUrl>http://storage.ideliverable.com/media/Default/Logo/Logo-Icon-Color-Loud-512.png</PackageIconUrl>
-        <Version>1.0.7.0</Version>
-        <AssemblyVersion>1.0.7.0</AssemblyVersion>
-        <FileVersion>1.0.7.0</FileVersion>
-        <PackageReleaseNotes>Added SourceLink debugging support.</PackageReleaseNotes>
+        <Version>1.0.8.0</Version>
+        <AssemblyVersion>1.0.8.0</AssemblyVersion>
+        <FileVersion>1.0.8.0</FileVersion>
+        <PackageReleaseNotes>Added additional XML extension methods.</PackageReleaseNotes>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     </PropertyGroup>
