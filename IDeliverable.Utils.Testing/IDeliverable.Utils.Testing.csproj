@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>IDeliverable, Ltd.</Authors>
+    <Description>A library of unit test related .NET managed code utility classes written in C#.</Description>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/IDeliverable/Utils</PackageProjectUrl>
+    <PackageIconUrl>http://storage.ideliverable.com/media/Default/Logo/Logo-Icon-Color-Loud-512.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/IDeliverable/Utils</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+  </PropertyGroup>
+
+<ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="xunit.assert" Version="2.4.1" />
+</ItemGroup>
+    
+</Project>
