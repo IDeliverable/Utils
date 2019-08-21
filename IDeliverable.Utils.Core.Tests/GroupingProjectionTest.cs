@@ -442,6 +442,8 @@ namespace IDeliverable.Utils.Core.Tests
                     {
                         if (x.Year == specialYear)
                             return -1;
+                        if (y.Year == specialYear)
+                            return 1;
 
                         return x.CompareTo(y);
                     }),
