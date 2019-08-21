@@ -12,10 +12,12 @@
         <PackageProjectUrl>https://github.com/IDeliverable/Utils</PackageProjectUrl>
         <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
         <PackageIconUrl>http://storage.ideliverable.com/media/Default/Logo/Logo-Icon-Color-Loud-512.png</PackageIconUrl>
-        <Version>1.0.9</Version>
-        <AssemblyVersion>1.0.9.0</AssemblyVersion>
-        <FileVersion>1.0.9.0</FileVersion>
-        <PackageReleaseNotes>Updated some package dependencies.</PackageReleaseNotes>
+        <Version>1.0.10</Version>
+        <AssemblyVersion>1.0.10.0</AssemblyVersion>
+        <FileVersion>1.0.10.0</FileVersion>
+        <PackageReleaseNotes>Added IHandler framework (ultra-lightweight decoupled messaging).
+Added ReflectionExtensions.
+Corrected a failing unit test for GroupingProjection.</PackageReleaseNotes>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
         <LangVersion>latest</LangVersion>
