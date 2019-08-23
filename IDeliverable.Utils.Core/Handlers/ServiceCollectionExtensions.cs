@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using IDeliverable.Utils.Core.Handlers;
@@ -55,8 +54,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return services;
         }
-
-        private static ConcurrentDictionary<Type, bool> sRegisteredMessageTypes = new ConcurrentDictionary<Type, bool>();
 
         private static IServiceCollection AddHandlers(this IServiceCollection services, Type implementedInterface)
         {
