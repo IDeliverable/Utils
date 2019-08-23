@@ -1,5 +1,8 @@
 using System;
-using IDeliverable.Utils.Handlers;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading.Tasks;
+using IDeliverable.Utils.Core.Handlers;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -9,8 +12,11 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			foreach (var implementedInterface in typeof(TService).GetInterfaces())
 			{
-				if (implementedInterface.IsSubclassOfGeneric(typeof(IHandler<>)))
-					services.AddSingleton(implementedInterface, typeof(TService));
+                if (implementedInterface.IsConstructedGenericType && implementedInterface.GetGenericTypeDefinition() == typeof(IHandler<>))
+                {
+                    services.AddSingleton(implementedInterface, typeof(TService));
+                    services.AddHandlers(implementedInterface);
+                }
 			}
 
 			return services;
@@ -20,11 +26,51 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			foreach (var implementedInterface in typeof(TService).GetInterfaces())
 			{
-				if (implementedInterface.IsSubclassOfGeneric(typeof(IHandler<>)))
-					services.AddSingleton(implementedInterface, implementationInstance);
-			}
+                if (implementedInterface.IsConstructedGenericType && implementedInterface.GetGenericTypeDefinition() == typeof(IHandler<>))
+                {
+                    services.AddSingleton(implementedInterface, implementationInstance);
+                    services.AddHandlers(implementedInterface);
+                }
+            }
 
 			return services;
 		}
-	}
+
+        public static IServiceCollection AddHandler<TMessage>(this IServiceCollection services, Action<TMessage> handler)
+        {
+            var delegateHandler = new DelegateHandler<TMessage>(handler);
+
+            services.AddSingleton<IHandler<TMessage>>(delegateHandler);
+            services.AddHandlers(typeof(IHandler<TMessage>));
+
+            return services;
+        }
+
+        public static IServiceCollection AddHandler<TMessage>(this IServiceCollection services, Func<TMessage, Task> handler)
+        {
+            var delegateHandler = new DelegateHandler<TMessage>(handler);
+
+            services.AddSingleton<IHandler<TMessage>>(delegateHandler);
+            services.AddHandlers(typeof(IHandler<TMessage>));
+
+            return services;
+        }
+
+        private static ConcurrentDictionary<Type, bool> sRegisteredMessageTypes = new ConcurrentDictionary<Type, bool>();
+
+        private static IServiceCollection AddHandlers(this IServiceCollection services, Type implementedInterface)
+        {
+            var messageType = implementedInterface.GenericTypeArguments[0];
+            var handlersServiceType = typeof(IHandlers<>).MakeGenericType(messageType);
+
+            // Only register the IHandlers<TMessage> once per message type.
+            if (!services.Any(serviceDescription => serviceDescription.ServiceType == handlersServiceType))
+            {
+                var handlersImplementationType = typeof(Handlers<>).MakeGenericType(messageType);
+                services.AddSingleton(handlersServiceType, handlersImplementationType);
+            }
+
+            return services;
+        }
+    }
 }

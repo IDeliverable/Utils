@@ -1,33 +1,11 @@
 using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace IDeliverable.Utils.Handlers
+namespace IDeliverable.Utils.Core.Handlers
 {
-	public interface IHandler<TMessage>
-	{
-		void Handle(TMessage message);
-	}
-
-	public static class IHandlerExtensions
-	{
-		public static void Handle<TMessage>(this IEnumerable<IHandler<TMessage>> handlers, TMessage message, bool ignoreExceptions = false)
-		{
-			if (handlers == null)
-				return;
-
-			foreach (var handler in handlers)
-			{
-				try
-				{
-					handler.Handle(message);
-				}
-				catch (Exception ex)
-				{
-					if (!ignoreExceptions)
-						throw ex;
-				}
-			}
-		}
-	}
+    public interface IHandler<TMessage>
+    {
+        Task HandleAsync(TMessage message);
+    }
 }
 
