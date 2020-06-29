@@ -132,10 +132,6 @@ namespace IDeliverable.Utils.Core.Tests
                     .AddSingleton<TestSender>()
                     .BuildServiceProvider();
 
-            // Ensure there's only one IHandlers<TestMessage> registered.
-            var handlersList = serviceProvider.GetRequiredService<IEnumerable<IHandlers<TestMessage>>>();
-            Assert.AreEqual(1, handlersList.Count());
-
             // Ensure there's two IHandler<TestMessage> registered.
             var handlerList = serviceProvider.GetRequiredService<IEnumerable<IHandler<TestMessage>>>();
             Assert.AreEqual(2, handlerList.Count());
@@ -203,6 +199,20 @@ namespace IDeliverable.Utils.Core.Tests
             Assert.AreEqual(value, handledMessageByOther.Value);
         }
 
+        [TestMethod]
+        [Description("Sender works even if no handlers are registered.")]
+        public void HandlersTest09()
+        {
+            var serviceProvider =
+                new ServiceCollection()
+                    .AddSingleton<TestSender>()
+                    .BuildServiceProvider();
+
+            var value = Guid.NewGuid().ToString();
+            var sender = serviceProvider.GetRequiredService<TestSender>();
+            sender.Send(value);
+        }
+
         public class TestMessage
         {
             public TestMessage(string value)
@@ -226,12 +236,12 @@ namespace IDeliverable.Utils.Core.Tests
 
         public class TestSender
         {
-            public TestSender(IHandlers<TestMessage> handlers)
+            public TestSender(IEnumerable<IHandler<TestMessage>> handlers)
             {
                 mHandlers = handlers;
             }
 
-            private readonly IHandlers<TestMessage> mHandlers;
+            private readonly IEnumerable<IHandler<TestMessage>> mHandlers;
 
             public void Send(string value, bool ignoreExceptions = false)
             {

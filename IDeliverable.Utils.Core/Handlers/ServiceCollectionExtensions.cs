@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using IDeliverable.Utils.Core.Handlers;
 
@@ -13,9 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 if (implementedInterface.IsConstructedGenericType && implementedInterface.GetGenericTypeDefinition() == typeof(IHandler<>))
                 {
-                    _ = services
-                        .AddSingleton(implementedInterface, typeof(TService))
-                        .AddHandlers(implementedInterface);
+                    _ = services.AddSingleton(implementedInterface, typeof(TService));
                 }
             }
 
@@ -28,9 +25,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 if (implementedInterface.IsConstructedGenericType && implementedInterface.GetGenericTypeDefinition() == typeof(IHandler<>))
                 {
-                    _ = services
-                        .AddSingleton(implementedInterface, implementationInstance)
-                        .AddHandlers(implementedInterface);
+                    _ = services.AddSingleton(implementedInterface, implementationInstance);
                 }
             }
 
@@ -41,33 +36,14 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var delegateHandler = new DelegateHandler<TMessage>(handler);
 
-            return services
-                .AddSingleton<IHandler<TMessage>>(delegateHandler)
-                .AddHandlers(typeof(IHandler<TMessage>));
+            return services.AddSingleton<IHandler<TMessage>>(delegateHandler);
         }
 
         public static IServiceCollection AddHandler<TMessage>(this IServiceCollection services, Func<TMessage, Task> handler)
         {
             var delegateHandler = new DelegateHandler<TMessage>(handler);
 
-            return services
-                .AddSingleton<IHandler<TMessage>>(delegateHandler)
-                .AddHandlers(typeof(IHandler<TMessage>));
-        }
-
-        private static IServiceCollection AddHandlers(this IServiceCollection services, Type implementedInterface)
-        {
-            var messageType = implementedInterface.GenericTypeArguments[0];
-            var handlersServiceType = typeof(IHandlers<>).MakeGenericType(messageType);
-
-            // Only register the IHandlers<TMessage> once per message type.
-            if (!services.Any(serviceDescription => serviceDescription.ServiceType == handlersServiceType))
-            {
-                var handlersImplementationType = typeof(Handlers<>).MakeGenericType(messageType);
-                _ = services.AddSingleton(handlersServiceType, handlersImplementationType);
-            }
-
-            return services;
+            return services.AddSingleton<IHandler<TMessage>>(delegateHandler);
         }
     }
 }
