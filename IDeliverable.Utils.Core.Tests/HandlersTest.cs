@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using IDeliverable.Utils.Core.Handlers;
 using Microsoft.Extensions.DependencyInjection;
@@ -58,7 +59,7 @@ namespace IDeliverable.Utils.Core.Tests
 
             var serviceProvider =
                 new ServiceCollection()
-                    .AddHandler<TestMessage>(message => handledMessage = message)
+                    .AddHandler<TestMessage>((message, cancellationToken) => handledMessage = message)
                     .AddSingleton<TestSender>()
                     .BuildServiceProvider();
 
@@ -227,7 +228,7 @@ namespace IDeliverable.Utils.Core.Tests
         {
             public TMessage HandledMessage { get; private set; }
 
-            public Task HandleAsync(TMessage message)
+            public Task HandleAsync(TMessage message, CancellationToken cancellationToken)
             {
                 HandledMessage = message;
                 return Task.CompletedTask;
