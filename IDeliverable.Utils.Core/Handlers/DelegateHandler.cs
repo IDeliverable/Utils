@@ -8,7 +8,7 @@ namespace IDeliverable.Utils.Core.Handlers
     {
         public DelegateHandler(Action<TMessage> handler)
         {
-            mHandler = (message, cancellationToken) =>
+            mHandler = (message, _) =>
             {
                 handler(message);
                 return Task.CompletedTask;
@@ -26,7 +26,7 @@ namespace IDeliverable.Utils.Core.Handlers
 
         public DelegateHandler(Func<TMessage, Task> handler)
         {
-            mHandler = (message, cancellationToken) =>
+            mHandler = (message, _) =>
             {
                 handler(message);
                 return Task.CompletedTask;
