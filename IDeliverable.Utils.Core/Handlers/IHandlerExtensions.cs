@@ -14,11 +14,13 @@ namespace IDeliverable.Utils.Core.Handlers
 
             foreach (var handler in handlers)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 try
                 {
                     await handler.HandleAsync(message, cancellationToken);
                 }
-                catch (Exception)
+                catch (Exception ex) when (!(ex is OperationCanceledException))
                 {
                     if (!ignoreExceptions)
                         throw;
