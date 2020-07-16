@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using IDeliverable.Utils.Core.Handlers;
 using Microsoft.Extensions.DependencyInjection;
@@ -58,7 +59,7 @@ namespace IDeliverable.Utils.Core.Tests
 
             var serviceProvider =
                 new ServiceCollection()
-                    .AddHandler<TestMessage>(message => handledMessage = message)
+                    .AddHandler<TestMessage>((message, cancellationToken) => handledMessage = message)
                     .AddSingleton<TestSender>()
                     .BuildServiceProvider();
 
@@ -213,6 +214,24 @@ namespace IDeliverable.Utils.Core.Tests
             sender.Send(value);
         }
 
+        [TestMethod]
+        [DataRow(true)]
+        [DataRow(false)]
+        [Description("Cancellation exceptions are always thrown.")]
+        public void HandlersTest10(bool ignoreExceptions)
+        {
+            var serviceProvider =
+                new ServiceCollection()
+                    .AddHandler<TestMessage>(s => throw new OperationCanceledException())
+                    .AddSingleton<TestSender>()
+                    .BuildServiceProvider();
+
+            var value = Guid.NewGuid().ToString();
+            var sender = serviceProvider.GetRequiredService<TestSender>();
+
+            Assert.ThrowsException<OperationCanceledException>(() => sender.Send(value, ignoreExceptions));
+        }
+
         public class TestMessage
         {
             public TestMessage(string value)
@@ -227,7 +246,7 @@ namespace IDeliverable.Utils.Core.Tests
         {
             public TMessage HandledMessage { get; private set; }
 
-            public Task HandleAsync(TMessage message)
+            public Task HandleAsync(TMessage message, CancellationToken cancellationToken)
             {
                 HandledMessage = message;
                 return Task.CompletedTask;
@@ -247,7 +266,7 @@ namespace IDeliverable.Utils.Core.Tests
             {
                 try
                 {
-                    mHandlers.HandleAsync(new TestMessage(value), ignoreExceptions).Wait();
+                    mHandlers.HandleAsync(new TestMessage(value), ignoreExceptions).GetAwaiter().GetResult();
                 }
                 catch (AggregateException ex)
                 {

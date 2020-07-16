@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using IDeliverable.Utils.Core.Handlers;
 
@@ -40,6 +41,20 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         public static IServiceCollection AddHandler<TMessage>(this IServiceCollection services, Func<TMessage, Task> handler)
+        {
+            var delegateHandler = new DelegateHandler<TMessage>(handler);
+
+            return services.AddSingleton<IHandler<TMessage>>(delegateHandler);
+        }
+
+        public static IServiceCollection AddHandler<TMessage>(this IServiceCollection services, Action<TMessage, CancellationToken> handler)
+        {
+            var delegateHandler = new DelegateHandler<TMessage>(handler);
+
+            return services.AddSingleton<IHandler<TMessage>>(delegateHandler);
+        }
+
+        public static IServiceCollection AddHandler<TMessage>(this IServiceCollection services, Func<TMessage, CancellationToken, Task> handler)
         {
             var delegateHandler = new DelegateHandler<TMessage>(handler);
 
