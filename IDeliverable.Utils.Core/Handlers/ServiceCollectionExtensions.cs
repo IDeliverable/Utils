@@ -33,6 +33,19 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
+        public static IServiceCollection AddHandler<TService>(this IServiceCollection services, Func<IServiceProvider, TService> implementationFactory) where TService : class
+        {
+            foreach (var implementedInterface in typeof(TService).GetInterfaces())
+            {
+                if (implementedInterface.IsConstructedGenericType && implementedInterface.GetGenericTypeDefinition() == typeof(IHandler<>))
+                {
+                    _ = services.AddSingleton(implementedInterface, implementationFactory);
+                }
+            }
+
+            return services;
+        }
+
         public static IServiceCollection AddHandler<TMessage>(this IServiceCollection services, Action<TMessage> handler)
         {
             var delegateHandler = new DelegateHandler<TMessage>(handler);
