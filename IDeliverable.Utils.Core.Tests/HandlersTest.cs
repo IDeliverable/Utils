@@ -149,7 +149,7 @@ namespace IDeliverable.Utils.Core.Tests
             
             var serviceProvider =
                 new ServiceCollection()
-                    .AddHandler<TestMessage>(message => throw new Exception(exceptionMessage))
+                    .AddHandler<TestMessage>(handler: message => throw new Exception(exceptionMessage))
                     .AddHandler<TestMessage>(message => handledMessageByOther = message)
                     .AddSingleton<TestSender>()
                     .BuildServiceProvider();
@@ -185,7 +185,7 @@ namespace IDeliverable.Utils.Core.Tests
 
             var serviceProvider =
                 new ServiceCollection()
-                    .AddHandler<TestMessage>(message => throw new Exception(exceptionMessage))
+                    .AddHandler<TestMessage>(handler: message => throw new Exception(exceptionMessage))
                     .AddHandler<TestMessage>(message => handledMessageByOther = message)
                     .AddSingleton<TestSender>()
                     .BuildServiceProvider();
@@ -222,7 +222,7 @@ namespace IDeliverable.Utils.Core.Tests
         {
             var serviceProvider =
                 new ServiceCollection()
-                    .AddHandler<TestMessage>(s => throw new OperationCanceledException())
+                    .AddHandler<TestMessage>(handler: s => throw new OperationCanceledException())
                     .AddSingleton<TestSender>()
                     .BuildServiceProvider();
 
@@ -230,6 +230,25 @@ namespace IDeliverable.Utils.Core.Tests
             var sender = serviceProvider.GetRequiredService<TestSender>();
 
             Assert.ThrowsException<OperationCanceledException>(() => sender.Send(value, ignoreExceptions));
+        }
+
+        [TestMethod]
+        [Description("Registration using handler implementation factory.")]
+        public void HandlersTest11()
+        {
+            var serviceProvider =
+                new ServiceCollection()
+                    .AddHandler(implementationFactory: serviceProvider => new TestHandler<TestMessage>())
+                    .AddSingleton<TestSender>()
+                    .BuildServiceProvider();
+
+            var value = Guid.NewGuid().ToString();
+            var handler = (TestHandler<TestMessage>)serviceProvider.GetRequiredService<IHandler<TestMessage>>();
+            var sender = serviceProvider.GetRequiredService<TestSender>();
+            sender.Send(value);
+
+            Assert.IsNotNull(handler.HandledMessage);
+            Assert.AreEqual(value, handler.HandledMessage.Value);
         }
 
         public class TestMessage
