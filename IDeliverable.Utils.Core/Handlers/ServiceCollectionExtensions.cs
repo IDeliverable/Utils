@@ -73,5 +73,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return services.AddSingleton<IHandler<TMessage>>(delegateHandler);
         }
+
+        public static IServiceCollection AddHandler<TMessage>(this IServiceCollection services, Func<IServiceProvider, TMessage, CancellationToken, Task> handler)
+        {
+            return services.AddSingleton<IHandler<TMessage>>((services) => new DelegateHandler<TMessage>((mesage, cancellationToken) => handler(services, mesage, cancellationToken)));
+        }
     }
 }
