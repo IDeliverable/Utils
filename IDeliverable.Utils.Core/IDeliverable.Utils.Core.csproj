@@ -16,11 +16,11 @@
         <AssemblyVersion>1.4.0.0</AssemblyVersion>
         <FileVersion>1.4.0.0</FileVersion>
         <PackageReleaseNotes>
-			Makes all AddHandler&lt;TImplementation&gt;() overloads idempotent.
-			Adds single-instance handling of multiple message types.
-			Adds xmldoc comments to all AddHandler() methods.
-			Adds missing AddHandler&lt;TMessage&gt;() overloads.
-		</PackageReleaseNotes>
+            Makes all AddHandler&lt;TImplementation&gt;() overloads idempotent.
+            Adds single-instance handling of multiple message types.
+            Adds xmldoc comments to all AddHandler() methods.
+            Adds missing AddHandler&lt;TMessage&gt;() overloads.
+        </PackageReleaseNotes>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
         <LangVersion>latest</LangVersion>

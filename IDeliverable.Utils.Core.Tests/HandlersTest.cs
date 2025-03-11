@@ -32,7 +32,7 @@ namespace IDeliverable.Utils.Core.Tests
             Assert.AreEqual(value, handler.HandledMessage.Value);
         }
 
-		[TestMethod]
+        [TestMethod]
         [Description("Registration using handler implementation factory.")]
         public void HandlersTest02()
         {
@@ -251,11 +251,11 @@ namespace IDeliverable.Utils.Core.Tests
             Assert.ThrowsException<OperationCanceledException>(() => sender.Send(value, ignoreExceptions));
         }
 
-		[TestMethod]
+        [TestMethod]
         [Description("Registration using handler implementation instance is idempotent.")]
         public void HandlersTest12()
         {
-			var handler = new TestHandler<TestMessage>();
+            var handler = new TestHandler<TestMessage>();
 
             var serviceProvider =
                 new ServiceCollection()
@@ -268,7 +268,7 @@ namespace IDeliverable.Utils.Core.Tests
             Assert.AreEqual(expected: 1, handlers.Count());
         }
 
-		[TestMethod]
+        [TestMethod]
         [Description("Registration using handler implementation factory is idempotent.")]
         public void HandlersTest13()
         {
@@ -292,7 +292,7 @@ namespace IDeliverable.Utils.Core.Tests
             var serviceProvider =
                 new ServiceCollection()
                     .AddHandler<TestHandler<TestMessage>>()
-					.AddHandler<TestHandler<TestMessage>>()
+                    .AddHandler<TestHandler<TestMessage>>()
                     .BuildServiceProvider();
 
             var handlers = serviceProvider.GetRequiredService<IEnumerable<IHandler<TestMessage>>>();
@@ -300,11 +300,11 @@ namespace IDeliverable.Utils.Core.Tests
             Assert.AreEqual(expected: 1, handlers.Count());
         }
 
-		[TestMethod]
+        [TestMethod]
         [Description("Same handler implementation instance is used to handle multiple message types (instance registration).")]
         public void HandlersTest15()
         {
-			var handler = new TestDualHandler();
+            var handler = new TestDualHandler();
 
             var serviceProvider =
                 new ServiceCollection()
@@ -312,12 +312,12 @@ namespace IDeliverable.Utils.Core.Tests
                     .BuildServiceProvider();
 
             var handler1 = serviceProvider.GetRequiredService<IHandler<Message1>>();
-			var handler2 = serviceProvider.GetRequiredService<IHandler<Message2>>();
+            var handler2 = serviceProvider.GetRequiredService<IHandler<Message2>>();
 
             Assert.AreSame<object>(handler1, handler2);
         }
 
-		[TestMethod]
+        [TestMethod]
         [Description("Same handler implementation instance is used to handle multiple message types (type registration).")]
         public void HandlersTest16()
         {
@@ -327,22 +327,22 @@ namespace IDeliverable.Utils.Core.Tests
                     .BuildServiceProvider();
 
             var handler1 = serviceProvider.GetRequiredService<IHandler<Message1>>();
-			var handler2 = serviceProvider.GetRequiredService<IHandler<Message2>>();
+            var handler2 = serviceProvider.GetRequiredService<IHandler<Message2>>();
 
             Assert.AreSame<object>(handler1, handler2);
         }
 
-		[TestMethod]
+        [TestMethod]
         [Description("Handler implementation factory is called once per handled message type.")]
         public void HandlersTest17()
         {
-			var numInvocations = 0;
+            var numInvocations = 0;
 
-			TestDualHandler handlerFactory(IServiceProvider serviceProvider)
-			{
-				numInvocations++;
-				return new();
-			}
+            TestDualHandler handlerFactory(IServiceProvider serviceProvider)
+            {
+                numInvocations++;
+                return new();
+            }
 
             var serviceProvider =
                 new ServiceCollection()
@@ -350,9 +350,9 @@ namespace IDeliverable.Utils.Core.Tests
                     .BuildServiceProvider();
 
             var handler1 = serviceProvider.GetRequiredService<IHandler<Message1>>();
-			var handler2 = serviceProvider.GetRequiredService<IHandler<Message2>>();
+            var handler2 = serviceProvider.GetRequiredService<IHandler<Message2>>();
 
-			Assert.AreEqual(expected: 2, numInvocations);
+            Assert.AreEqual(expected: 2, numInvocations);
             Assert.AreNotSame<object>(handler1, handler2);
         }
 
@@ -399,10 +399,10 @@ namespace IDeliverable.Utils.Core.Tests
             }
         }
 
-		public class TestDualHandler : IHandler<Message1>, IHandler<Message2>
+        public class TestDualHandler : IHandler<Message1>, IHandler<Message2>
         {
             public Message1 HandledMessage1 { get; private set; }
-			public Message2 HandledMessage2 { get; private set; }
+            public Message2 HandledMessage2 { get; private set; }
 
             public Task HandleAsync(Message1 message, CancellationToken cancellationToken)
             {
@@ -417,7 +417,7 @@ namespace IDeliverable.Utils.Core.Tests
             }
         }
 
-		public class Message1 { }
-		public class Message2 { }
+        public class Message1 { }
+        public class Message2 { }
     }
 }
