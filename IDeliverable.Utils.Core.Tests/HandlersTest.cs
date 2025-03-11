@@ -300,6 +300,62 @@ namespace IDeliverable.Utils.Core.Tests
             Assert.AreEqual(expected: 1, handlers.Count());
         }
 
+		[TestMethod]
+        [Description("Same handler implementation instance is used to handle multiple message types (instance registration).")]
+        public void HandlersTest15()
+        {
+			var handler = new TestDualHandler();
+
+            var serviceProvider =
+                new ServiceCollection()
+                    .AddHandler(handler)
+                    .BuildServiceProvider();
+
+            var handler1 = serviceProvider.GetRequiredService<IHandler<Message1>>();
+			var handler2 = serviceProvider.GetRequiredService<IHandler<Message2>>();
+
+            Assert.AreSame<object>(handler1, handler2);
+        }
+
+		[TestMethod]
+        [Description("Same handler implementation instance is used to handle multiple message types (type registration).")]
+        public void HandlersTest16()
+        {
+            var serviceProvider =
+                new ServiceCollection()
+                    .AddHandler<TestDualHandler>()
+                    .BuildServiceProvider();
+
+            var handler1 = serviceProvider.GetRequiredService<IHandler<Message1>>();
+			var handler2 = serviceProvider.GetRequiredService<IHandler<Message2>>();
+
+            Assert.AreSame<object>(handler1, handler2);
+        }
+
+		[TestMethod]
+        [Description("Handler implementation factory is called once per handled message type.")]
+        public void HandlersTest17()
+        {
+			var numInvocations = 0;
+
+			TestDualHandler handlerFactory(IServiceProvider serviceProvider)
+			{
+				numInvocations++;
+				return new();
+			}
+
+            var serviceProvider =
+                new ServiceCollection()
+                    .AddHandler(handlerFactory)
+                    .BuildServiceProvider();
+
+            var handler1 = serviceProvider.GetRequiredService<IHandler<Message1>>();
+			var handler2 = serviceProvider.GetRequiredService<IHandler<Message2>>();
+
+			Assert.AreEqual(expected: 2, numInvocations);
+            Assert.AreNotSame<object>(handler1, handler2);
+        }
+
         public class TestMessage
         {
             public TestMessage(string value)
